@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Profile Library — ContextShift</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0b0f14;
+  --border: rgba(255,255,255,0.1);
+  --text: #e7edf6;
+  --muted: #9aa8bb;
+  --accent: #7c5cff;
+  --radius: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, sans-serif;
+  padding: 32px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+.subtitle {
+  color: var(--muted);
+  font-size: 15px;
+  margin-bottom: 32px;
+}
+.categories {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.cat-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.cat-btn.active, .cat-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 14px;
+}
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  background: rgba(255,255,255,0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+.tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(124,92,255,0.15);
+  color: #a78bff;
+  border: 1px solid rgba(124,92,255,0.25);
+}
+.card-text {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: monospace;
+  line-height: 1.5;
+  background: rgba(0,0,0,0.2);
+  padding: 10px;
+  border-radius: 8px;
+}
+.add-btn {
+  padding: 9px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(124,92,255,0.5);
+  background: rgba(124,92,255,0.15);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+}
+.add-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.add-btn.added {
+  background: rgba(34,197,94,0.15);
+  border-color: rgba(34,197,94,0.4);
+  color: #4ade80;
+}
+.notice {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 24px;
+  display: none;
+}
+</style>
+</head>
+<body>
+
+<h1>📚 Profile Library</h1>
+<p class="subtitle">Browse ready-made context profiles. Click "Add to ContextShift" to install instantly.</p>
+
+<div class="notice" id="notice">
+  ⚠️ Please open this page from the ContextShift extension to add profiles directly.
+  <br><br>
+  <a href="https://chromewebstore.google.com/detail/contextshift/ifjbbjlnaicimnmdmjbbdplenibhhiep" 
+     style="color: #a78bff">Install ContextShift free →</a>
+</div>
+
+<div class="categories">
+  <button class="cat-btn active" onclick="filter('all')">All</button>
+  <button class="cat-btn" onclick="filter('developer')">Developer</button>
+  <button class="cat-btn" onclick="filter('student')">Student</button>
+  <button class="cat-btn" onclick="filter('writer')">Writer</button>
+  <button class="cat-btn" onclick="filter('marketer')">Marketer</button>
+  <button class="cat-btn" onclick="filter('business')">Business</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+const profiles = [
+  {
+    name: "Software Developer",
+    category: "developer",
+    context: "I am a software developer. Always respond with clean, working code examples. Keep explanations short and technical. Use simple English. Prefer JavaScript/Python unless I specify otherwise. Always mention edge cases and potential bugs."
+  },
+  {
+    name: "React Developer",
+    category: "developer", 
+    context: "I am a React developer building modern web apps. Always use functional components with hooks. Prefer TypeScript. Use Tailwind for styling. Keep code clean and well-commented."
+  },
+  {
+    name: "Python Developer",
+    category: "developer",
+    context: "I am a Python developer. Always use Python 3.10+. Follow PEP8 standards. Prefer clean, readable code over clever one-liners. Include type hints. Add docstrings for functions."
+  },
+  {
+    name: "Full Stack Developer",
+    category: "developer",
+    context: "I am a full stack developer working with Node.js backend and React frontend. Always consider both client and server side. Use REST API best practices. Keep security in mind."
+  },
+  {
+    name: "College Student",
+    category: "student",
+    context: "I am a college student trying to learn and understand concepts deeply. Always explain things simply like I am hearing it for the first time. Use real life examples and analogies. Break complex topics into small steps. End every explanation with a quick summary."
+  },
+  {
+    name: "Engineering Student",
+    category: "student",
+    context: "I am an engineering student studying computer science. Explain concepts with diagrams in text form. Give me practical examples. Connect theory to real world applications. Help me understand WHY not just HOW."
+  },
+  {
+    name: "MBA Student",
+    category: "student",
+    context: "I am an MBA student focused on business strategy and management. Use business frameworks when relevant. Give real company examples. Keep analysis structured with clear headings. Focus on actionable insights."
+  },
+  {
+    name: "Content Writer",
+    category: "writer",
+    context: "I am a content writer creating blogs and social media posts. Always respond in a conversational, engaging tone. Keep sentences short. Use simple words. Make content scannable with bullet points when needed. Always sound human, never robotic or formal."
+  },
+  {
+    name: "Technical Writer",
+    category: "writer",
+    context: "I am a technical writer creating documentation. Be precise and clear. Use active voice. Structure content with headers and numbered steps. Avoid jargon unless necessary. Always think about the end user reading this."
+  },
+  {
+    name: "Creative Writer",
+    category: "writer",
+    context: "I am a creative writer working on fiction. Be imaginative and descriptive. Use vivid language. Show don't tell. Help me develop characters, plot and world building. Match the tone and style of my writing."
+  },
+  {
+    name: "Digital Marketer",
+    category: "marketer",
+    context: "I am a digital marketer. Always respond with conversion-focused copy. Use AIDA framework when relevant. Keep CTAs strong and clear. Think about the target audience. Use data-driven language."
+  },
+  {
+    name: "Social Media Manager",
+    category: "marketer",
+    context: "I am a social media manager. Create engaging, platform-appropriate content. Keep Instagram captions punchy. Make Twitter/X posts concise. LinkedIn posts should be professional yet personal. Always include relevant hashtag suggestions."
+  },
+  {
+    name: "SEO Specialist",
+    category: "marketer",
+    context: "I am an SEO specialist. Always consider search intent. Suggest keyword placement naturally. Structure content with proper H1, H2, H3 hierarchy. Think about featured snippets. Keep readability score high."
+  },
+  {
+    name: "Startup Founder",
+    category: "business",
+    context: "I am a startup founder building a SaaS product. Think lean and MVP-focused. Prioritize user value. Give advice that scales. Consider limited resources and team size. Think growth and retention."
+  },
+  {
+    name: "Product Manager",
+    category: "business",
+    context: "I am a product manager. Structure responses with user stories when relevant. Think about prioritization and trade-offs. Use data to justify decisions. Consider stakeholder perspectives. Focus on outcomes not outputs."
+  },
+  {
+    name: "Sales Professional",
+    category: "business",
+    context: "I am a sales professional. Help me write persuasive but genuine communication. Focus on value proposition. Handle objections smoothly. Keep tone confident but not pushy. Think about the buyer's perspective."
+  }
+];
+
+let currentFilter = 'all';
+
+function filter(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => 
+    b.classList.toggle('active', b.textContent.toLowerCase() === cat || (cat === 'all' && b.textContent === 'All'))
+  );
+  render();
+}
+
+function render() {
+  const grid = document.getElementById('grid');
+  const filtered = currentFilter === 'all' 
+    ? profiles 
+    : profiles.filter(p => p.category === currentFilter);
+  
+  grid.innerHTML = filtered.map((p, i) => `
+    <div class="card">
+      <div class="card-top">
+        <span class="card-name">${p.name}</span>
+        <span class="tag">${p.category}</span>
+      </div>
+      <div class="card-text">${p.context}</div>
+      <button class="add-btn" onclick="addProfile(${profiles.indexOf(p)})" id="btn-${profiles.indexOf(p)}">
+        + Add to ContextShift
+      </button>
+    </div>
+  `).join('');
+}
+
+function addProfile(index) {
+  const profile = profiles[index];
+  const btn = document.getElementById('btn-' + index);
+  
+  chrome.storage.local.get(['cs_profiles'], (result) => {
+    const existing = result.cs_profiles || [];
+    
+    const alreadyExists = existing.find(p => p.name === profile.name);
+    if (alreadyExists) {
+      btn.textContent = '✅ Already Added!';
+      btn.classList.add('added');
+      setTimeout(() => {
+        btn.textContent = '+ Add to ContextShift';
+        btn.classList.remove('added');
+      }, 2000);
+      return;
+    }
+    
+    existing.push({ name: profile.name, context: profile.context });
+    chrome.storage.local.set({ cs_profiles: existing }, () => {
+      btn.textContent = '✅ Added!';
+      btn.classList.add('added');
+      setTimeout(() => {
+        btn.textContent = '+ Add to ContextShift';
+        btn.classList.remove('added');
+      }, 2000);
+    });
+  });
+}
+
+if (typeof chrome === 'undefined' || !chrome.storage) {
+  document.getElementById('notice').style.display = 'block';
+  document.querySelectorAll('.add-btn').forEach(b => b.disabled = true);
+}
+
+render();
+</script>
+</body>
+</html>
