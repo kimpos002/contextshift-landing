@@ -269,30 +269,15 @@ function addProfile(index) {
   const profile = profiles[index];
   const btn = document.getElementById('btn-' + index);
   
-  chrome.storage.local.get(['cs_profiles'], (result) => {
-    const existing = result.cs_profiles || [];
-    
-    const alreadyExists = existing.find(p => p.name === profile.name);
-    if (alreadyExists) {
-      btn.textContent = '✅ Already Added!';
-      btn.classList.add('added');
-      setTimeout(() => {
-        btn.textContent = '+ Add to ContextShift';
-        btn.classList.remove('added');
-      }, 2000);
-      return;
-    }
-    
-    existing.push({ name: profile.name, context: profile.context });
-    chrome.storage.local.set({ cs_profiles: existing }, () => {
-      btn.textContent = '✅ Added!';
-      btn.classList.add('added');
-      setTimeout(() => {
-        btn.textContent = '+ Add to ContextShift';
-        btn.classList.remove('added');
-      }, 2000);
-    });
-  });
+  btn.textContent = '⏳ Adding...';
+  
+  const encoded = encodeURIComponent(JSON.stringify({
+    name: profile.name,
+    context: profile.context
+  }));
+  
+  window.location.href = 
+    'https://contextshift-landing.vercel.app/library.html?add=' + encoded;
 }
 
 if (typeof chrome === 'undefined' || !chrome.storage) {
